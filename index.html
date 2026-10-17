@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Service Desk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a class="brand" href="#" data-page="listPage">
+        <span class="brand-logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </span>
+        <span class="brand-text">Service Desk</span>
+      </a>
+
+      <nav class="nav" aria-label="Основная навигация">
+        <button class="nav-link active" data-page="listPage">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          Мои заявки
+        </button>
+
+        <!-- Админ-пункт: показывается только админу -->
+        <button class="nav-link" data-page="adminPage" data-role="admin" hidden>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Все заявки
+        </button>
+
+        <button class="nav-link" data-page="createPage">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Создать заявку
+        </button>
+        <button class="nav-link" data-page="helpPage">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Справка
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Экран 1. Список своих заявок -->
+    <section id="listPage" class="page">
+      <div class="page-title-row">
+        <div>
+          <h1>Мои заявки</h1>
+          <p class="page-subtitle">Созданные вами обращения и их текущие состояния.</p>
+        </div>
+        <button id="openCreateButton" class="button button-primary">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Создать заявку
+        </button>
+      </div>
+      <div id="requestList" class="request-list"></div>
+    </section>
+
+    <!-- Экран 2. Создание заявки -->
+    <section id="createPage" class="page" hidden>
+      <div class="page-title-row">
+        <div>
+          <h1>Новая заявка</h1>
+          <p class="page-subtitle">Заполните обязательные поля. После создания заявка появится в списке.</p>
+        </div>
+      </div>
+
+      <form id="requestForm" class="form-card" novalidate>
+        <div class="field">
+          <label for="title">Тема <span class="required">*</span></label>
+          <input id="title" name="title" type="text" required maxlength="80"
+                 placeholder="Кратко опишите проблему"
+                 aria-describedby="titleError">
+          <div class="field-error" id="titleError" role="alert"></div>
+        </div>
+
+        <div class="field">
+          <label for="category">Категория <span class="required">*</span></label>
+          <select id="category" name="category" required aria-describedby="categoryError">
+            <option value="">Выберите категорию</option>
+            <option>Оборудование</option>
+            <option>Программное обеспечение</option>
+            <option>Учётная запись</option>
+            <option>Другое</option>
+          </select>
+          <div class="field-error" id="categoryError" role="alert"></div>
+        </div>
+
+        <div class="field">
+          <label for="description">Описание <span class="required">*</span></label>
+          <textarea id="description" name="description" rows="6" required
+                    minlength="10" placeholder="Опишите, что произошло и что вы уже пробовали сделать"
+                    aria-describedby="descriptionHint descriptionError"></textarea>
+          <div class="field-hint" id="descriptionHint">Минимум 10 символов.</div>
+          <div class="field-error" id="descriptionError" role="alert"></div>
+        </div>
+
+        <div class="field">
+          <label for="priority">Приоритет</label>
+          <select id="priority" name="priority">
+            <option>Обычный</option>
+            <option>Высокий</option>
+          </select>
+        </div>
+
+        <div class="actions">
+          <button id="submitButton" class="button button-primary" type="submit">
+            Создать заявку
+          </button>
+          <button class="button button-secondary" type="button" data-page="listPage">
+            Отмена
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Экран 3. Карточка заявки -->
+    <section id="detailPage" class="page" hidden>
+      <button class="link-button" type="button" data-page="listPage">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        К списку
+      </button>
+      <div id="requestDetails"></div>
+    </section>
+
+    <!-- Экран 4. Админ-панель: все заявки -->
+    <section id="adminPage" class="page" hidden>
+      <div class="page-title-row">
+        <div>
+          <h1>Все заявки</h1>
+          <p class="page-subtitle">Обращения всех пользователей. Можно менять статусы.</p>
+        </div>
+      </div>
+
+      <div class="admin-filters" id="adminFilters">
+        <button class="filter-button active" data-filter="all">Все</button>
+        <button class="filter-button" data-filter="Новая">Новые</button>
+        <button class="filter-button" data-filter="В работе">В работе</button>
+        <button class="filter-button" data-filter="Закрыта">Закрытые</button>
+      </div>
+
+      <div id="adminRequestList" class="request-list"></div>
+    </section>
+
+    <!-- Дополнительный экран. Справка -->
+    <section id="helpPage" class="page" hidden>
+      <div class="page-title-row">
+        <div>
+          <h1>Справка</h1>
+          <p class="page-subtitle">Как работает система Service Desk.</p>
+        </div>
+      </div>
+
+      <div class="help-card">
+        <p>Система Service Desk позволяет создавать обращения в техническую поддержку и отслеживать их состояние.</p>
+        <ul class="help-list">
+          <li><strong>Мои заявки</strong> — список ваших обращений и их статусов.</li>
+          <li><strong>Все заявки</strong> — доступно администратору: все обращения всех пользователей.</li>
+          <li><strong>Создать заявку</strong> — форма нового обращения.</li>
+          <li><strong>Карточка заявки</strong> — подробности и изменение статуса.</li>
+        </ul>
+        <div class="help-statuses">
+          <div class="status-example"><span class="badge badge-new">Новая</span> — заявка создана и ожидает обработки.</div>
+          <div class="status-example"><span class="badge badge-work">В работе</span> — заявка принята в обработку.</div>
+          <div class="status-example"><span class="badge badge-closed">Закрыта</span> — работа завершена.</div>
+        </div>
+        <button class="button button-secondary" type="button" data-page="listPage">
+          Вернуться к заявкам
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <dialog id="confirmDialog" class="dialog" aria-labelledby="confirmTitle">
+    <div class="dialog-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+    <h2 id="confirmTitle">Закрыть заявку?</h2>
+    <p>После подтверждения статус будет изменён на «Закрыта». Дальнейшее изменение данных невозможно.</p>
+    <div class="actions actions-end">
+      <button id="cancelCloseButton" class="button button-secondary" type="button">
+        Отмена
+      </button>
+      <button id="confirmCloseButton" class="button button-danger" type="button">
+        Закрыть заявку
+      </button>
+    </div>
+  </dialog>
+
+  <!-- 1) Библиотека Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- 2) Конфиг с ключами -->
+  <script>
+    window.SUPABASE_URL = "https://teagkibljdiryieeikcm.supabase.co";
+    window.SUPABASE_KEY = "sb_publishable_G9l2FFQ6Q6GzRp12FmyVNg_eT3uoBpK";
+  </script>
+
+  <!-- 3) Ваш код -->
+  <script src="app.js"></script>
+</body>
+</html>
